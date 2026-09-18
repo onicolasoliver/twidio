@@ -1,0 +1,90 @@
+cd $env:USERPROFILE\Desktop\twidio
+
+@'
+# TwiDIO — Desafio TDD
+
+API REST de posts construída com **Node.js + TypeScript** seguindo **TDD** estrito e arquitetura em camadas (`Repository → Service → Controller`).
+
+Este projeto é a minha resolução do desafio proposto na plataforma DIO, replicando o padrão do repositório original com testes escritos antes da implementação em cada camada.
+
+## Stack
+
+- **Runtime:** Node.js 20
+- **Linguagem:** TypeScript 5 (strict)
+- **ORM:** TypeORM + SQLite
+- **Testes:** Jest + ts-jest
+- **Metodologia:** TDD (Red → Green → Refactor)
+
+## Arquitetura
+src/
+├── mocks/ # mocks compartilhados (EntityManager, Request, Response)
+│ ├── getEntityManagerMock.ts
+│ ├── mockRequest.ts
+│ └── mockResponse.ts
+├── entities/
+│ └── Post.ts # entidade TypeORM
+├── repositories/
+│ └── PostRepository.ts # acesso ao banco
+├── services/
+│ └── SavePostService.ts # regras de negócio
+├── controllers/
+│ └── SavePostController.ts # camada HTTP
+└── tests/
+├── PostRepository.test.ts
+├── SavePostService.test.ts
+├── SavePostController.test.ts
+└── integration/
+└── savePost.integration.test.ts
+
+
+Cada camada tem teste próprio. Os testes unitários usam mocks da camada inferior para isolar o alvo; o teste de integração sobe um SQLite em memória e exercita a cadeia completa `Controller → Service → Repository → banco`.
+
+## Como rodar
+
+```bash
+git clone https://github.com/onicolasoliver/twidio.git
+cd twidio
+npm install
+Testes
+bash
+npm test              # unit tests (repository, service, controller)
+npm run test:watch    # modo watch
+npm run test:cov      # com relatório de cobertura
+npm run test:e2e      # teste de integração com SQLite in-memory
+Resultado atual:
+
+Test Suites: 4 passed, 4 total
+Tests:       11 passed, 11 total
+Fluxo TDD
+Cada arquivo nasceu de um teste vermelho:
+
+PostRepository — teste verifica que save chama create + save do repositório TypeORM com os argumentos corretos; e que findAll retorna o array persistido. Inclui caso de erro propagado do banco.
+
+SavePostService — teste verifica regras de negócio: campos obrigatórios (title, content, author) e limite de 5000 caracteres no conteúdo. Garante que o repositório não é chamado quando a validação falha.
+
+SavePostController — teste verifica o mapeamento HTTP: corpo da requisição vira input do service, retorno vira 201 com o post salvo, e erro do service vira 400 com { error }.
+
+Integração — sobe SQLite real (:memory:), monta a cadeia completa e confirma que o post foi persistido de verdade e que payload inválido retorna 400 sem tocar no banco.
+
+Estrutura da entidade Post
+Campo	Tipo	Restrição
+id	uuid	chave primária
+title	string	obrigatório
+content	string	obrigatório, max 5000
+author	string	obrigatório
+createdAt	Date	preenchido pelo ORM
+Decisões técnicas
+strict: true no tsconfig — entidades usam ! nas propriedades porque o TypeORM as preenche em runtime, não no construtor. É o padrão em todo projeto TypeORM com strict mode.
+
+experimentalDecorators: true + emitDecoratorMetadata: true — necessários para os decorators do TypeORM (@Entity, @Column, etc.).
+
+isolatedModules: false no transform do ts-jest — força o ts-jest a usar os decorators legados exigidos pelo TypeORM em vez do formato TC39 do TypeScript 5.
+
+esModuleInterop: true — permite imports default de pacotes CommonJS (express, typeorm).
+
+Próximos passos
+Rota HTTP POST /api/posts plugando o SavePostController em Express.
+
+Segundo use case ListPostsService reaproveitando o findAll do repository.
+
+
