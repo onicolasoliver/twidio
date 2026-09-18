@@ -15,26 +15,27 @@ Este projeto é a minha resolução do desafio proposto na plataforma DIO, repli
 - **Testes:** Jest + ts-jest
 - **Metodologia:** TDD (Red → Green → Refactor)
 
-## Arquitetura
+\\\`\\\`\\\`
 src/
-├── mocks/
-│ ├── getEntityManagerMock.ts
-│ ├── mockRequest.ts
-│ └── mockResponse.ts
+├── __mocks__/
+│   ├── getEntityManagerMock.ts
+│   ├── mockRequest.ts
+│   └── mockResponse.ts
 ├── entities/
-│ └── Post.ts
+│   └── Post.ts
 ├── repositories/
-│ └── PostRepository.ts
+│   └── PostRepository.ts
 ├── services/
-│ └── SavePostService.ts
+│   └── SavePostService.ts
 ├── controllers/
-│ └── SavePostController.ts
+│   └── SavePostController.ts
 └── tests/
-├── PostRepository.test.ts
-├── SavePostService.test.ts
-├── SavePostController.test.ts
-└── integration/
-└── savePost.integration.test.ts
+    ├── PostRepository.test.ts
+    ├── SavePostService.test.ts
+    ├── SavePostController.test.ts
+    └── integration/
+        └── savePost.integration.test.ts
+\\\`\\\`\\\`
 
 
 Cada camada tem teste próprio. Os testes unitários usam mocks da camada inferior para isolar o alvo; o teste de integração sobe um SQLite em memória e exercita a cadeia completa `Controller → Service → Repository → banco`.
