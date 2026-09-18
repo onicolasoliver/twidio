@@ -17,18 +17,18 @@ Este projeto é a minha resolução do desafio proposto na plataforma DIO, repli
 
 ## Arquitetura
 src/
-├── mocks/ # mocks compartilhados (EntityManager, Request, Response)
+├── mocks/
 │ ├── getEntityManagerMock.ts
 │ ├── mockRequest.ts
 │ └── mockResponse.ts
 ├── entities/
-│ └── Post.ts # entidade TypeORM
+│ └── Post.ts
 ├── repositories/
-│ └── PostRepository.ts # acesso ao banco
+│ └── PostRepository.ts
 ├── services/
-│ └── SavePostService.ts # regras de negócio
+│ └── SavePostService.ts
 ├── controllers/
-│ └── SavePostController.ts # camada HTTP
+│ └── SavePostController.ts
 └── tests/
 ├── PostRepository.test.ts
 ├── SavePostService.test.ts
